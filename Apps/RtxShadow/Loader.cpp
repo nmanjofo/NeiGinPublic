@@ -33,13 +33,13 @@ ModelData Loader::load(Nei::DeviceContext* dc, fs::path const& path) {
 
   Assimp::Importer importer;
   auto* scene = importer.ReadFile(path.string().c_str(),
-    aiProcess_JoinIdenticalVertices |
+    //aiProcess_JoinIdenticalVertices |
     aiProcess_Triangulate |
-    aiProcess_GenSmoothNormals |
+    //aiProcess_GenSmoothNormals |
     aiProcess_RemoveRedundantMaterials |
     aiProcess_PreTransformVertices |
-    aiProcess_FlipWindingOrder |
-    aiProcess_LimitBoneWeights);
+    aiProcess_FlipWindingOrder 
+  );
   if (!scene) {
     nei_error("Unable to load model {}", path.string().c_str());
     nei_error("Error: {}", importer.GetErrorString());
@@ -152,6 +152,7 @@ Flythrough Loader::loadFly(fs::path const& path)
   {
     std::string line;
     stream >> line;
+    if (line.empty()) continue;
 
     std::stringstream ss(line);
 

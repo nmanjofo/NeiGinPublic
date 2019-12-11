@@ -40,7 +40,7 @@ namespace Nei{
 
     vec2 fov;
     float aspect;
-    float nearPlane = 0.1f;
+    float nearPlane = 0.01f;
     float farPlane = 1000;
   };
 };
