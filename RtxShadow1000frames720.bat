@@ -1,0 +1,1 @@
+bin\release\RtxShadow.exe -w 1280 -h 720 -t 1000 -a 5 -l log720.csv

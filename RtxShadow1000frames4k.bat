@@ -1,0 +1,1 @@
+bin\release\RtxShadow.exe -w 3840 -h 2160 -t 1000 -a 5 -l log4k.csv
