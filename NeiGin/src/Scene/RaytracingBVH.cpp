@@ -106,3 +106,7 @@ void RaytracingBVH::rebuildBottom(CommandBuffer* cmd, Mesh* mesh) {
 AccelerationStructure* RaytracingBVH::getTop() const {
   return topLevel;
 }
+
+uint64 RaytracingBVH::getBottomCompactedSize() {
+  return bottomLevel->getCompactedSize();
+}

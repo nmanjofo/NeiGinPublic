@@ -3,6 +3,7 @@
 #include "DeviceObject.h"
 
 namespace vk {
+  // missing in vulkan.h
   struct GeometryInstance {
     /// Transform matrix, containing only the top 3 rows
     float transform[12];
@@ -29,15 +30,21 @@ namespace Nei::Vu {
     vk::AccelerationStructureNV operator*() const { return structure; }
     operator vk::AccelerationStructureNV() const { return structure; }
 
-    uint64 getHandle();
+    uint64 getHandle() const {return handle;}
+
+    void setUpdatable(bool updatable) {this->updatable=updatable;}
 
     void create(CommandBuffer* cmd, std::vector<vk::GeometryNV> geometries);
     void update(CommandBuffer* cmd, std::vector<vk::GeometryNV> geometries);
 
     void create(CommandBuffer* cmd, std::vector<vk::GeometryInstance> instances);
     void update(CommandBuffer* cmd, std::vector<vk::GeometryInstance> instances);
-  //protected:
+
+    uint64 getCompactedSize();
+  protected:
+    bool updatable = false;
     vk::AccelerationStructureNV structure;
+    uint64 handle=0;
     Ptr<Buffer> buffer;
     Ptr<Buffer> bufferScratch;
     Ptr<Buffer> bufferInstances;

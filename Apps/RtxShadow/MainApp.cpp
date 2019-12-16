@@ -46,9 +46,17 @@ MainApp::MainApp(int argc, char** argv): SimpleApplication(nullptr) {
     flythrough.setSpeed(args.speed);
   }
 
+  lightPosition = args.light;
+
 #if rtx
   bvh = new RaytracingBVH(dc);
   bvh->create(cmd, model.mesh);
+  cmd->end();
+  cmd->submit();
+
+  auto size = bvh->getBottomCompactedSize();
+  
+  cmd->begin();
 #endif
 
   // Pipelines 

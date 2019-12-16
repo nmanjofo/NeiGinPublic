@@ -26,6 +26,8 @@ namespace Nei{
 
     AccelerationStructure* getTop() const;
     auto& getInstanceData() const{return instanceData;}
+
+    uint64 getBottomCompactedSize();
   protected:
     Node* root;
     Ptr<AccelerationStructure> topLevel;
