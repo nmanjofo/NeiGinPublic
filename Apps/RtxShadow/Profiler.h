@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Scene/Mesh.h"
-#include "Flythrough.h"
 #include "NeiVu/DeviceObject.h"
 #include <fstream>
 

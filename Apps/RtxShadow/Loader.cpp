@@ -114,7 +114,7 @@ ModelData Loader::load(Nei::DeviceContext* dc, fs::path const& path) {
     int materialId = aMesh->mMaterialIndex;
 
     for (uint j = 0; j < vertexCount; j++) {
-      vptr->position = 0.01f*toGlm(aMesh->mVertices[j]);
+      vptr->position = toGlm(aMesh->mVertices[j]);
       if (normals)vptr->normal = toGlm(aMesh->mNormals[j]);
       if (texCoords)vptr->texCoord = toGlm(aMesh->mTextureCoords[0][j]);
       vptr->material = materialId;
@@ -139,49 +139,6 @@ ModelData Loader::load(Nei::DeviceContext* dc, fs::path const& path) {
   mesh->setMeshBuffer(meshBuffer);
 
   dc->wait();
-
-  return ret;
-}
-
-Flythrough Loader::loadFly(fs::path const& path)
-{
-  Flythrough ret;
-
-  std::ifstream stream(path);
-  while(!stream.eof())
-  {
-    std::string line;
-    stream >> line;
-    if (line.empty()) continue;
-
-    std::stringstream ss(line);
-
-    char d;
-    
-    FlyPoint p;
-    ss >> p.position.x;
-    ss >> d;
-    ss >> p.position.y;
-    ss >> d;
-    ss >> p.position.z;
-    ss >> d;
-    ss >> p.fwd.x;
-    ss >> d;
-    ss >> p.fwd.y;
-    ss >> d;
-    ss >> p.fwd.z;
-    ss >> d;
-    ss >> p.up.x;
-    ss >> d;
-    ss >> p.up.y;
-    ss >> d;
-    ss >> p.up.z;
-    ss >> d;
-
-    p.position *= 0.01f;
-
-    ret.points.push_back(p);
-  }
 
   return ret;
 }

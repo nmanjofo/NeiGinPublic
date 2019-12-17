@@ -26,7 +26,7 @@ MainApp::MainApp(int argc, char** argv): SimpleApplication(nullptr) {
   opt.window.size = {args.w, args.h};
   init(opt);
 
-  NeiFS->mount(APP_DIR);
+  NeiFS->mount(std::filesystem::current_path());
 
   auto& dc = deviceContext;
   Ptr cmd = new CommandBuffer(dc);
@@ -42,8 +42,7 @@ MainApp::MainApp(int argc, char** argv): SimpleApplication(nullptr) {
   // Model
   model = Loader::load(dc, NeiFS->resolve(args.model));
   if (!args.flythrough.empty()) {
-    flythrough = Loader::loadFly(NeiFS->resolve(args.flythrough));
-    flythrough.setSpeed(args.speed);
+    cameraPath = CameraPath(false, NeiFS->resolve(args.flythrough).string());
   }
 
   lightPosition = args.light;
@@ -141,21 +140,21 @@ void MainApp::draw() {
     profiler->writeMarker(cmd);
     {
       ProfileGPU(cmd, "BVH update");
-      /* not implemented yet
+      // not implemented yet
       if(args.bvh==1)
         bvh->rebuildTop(cmd);
       if(args.bvh==2) {
         bvh->rebuildBottom(cmd,model.mesh);
         bvh->rebuildTop(cmd);
       }
-      cmd->debugBarrier();
-      */
+      //cmd->debugBarrier();
+      //*/
     }
 
     profiler->writeMarker(cmd);
 
     {
-      ProfileGPU(cmd, "GBuffer");
+      ProfileGPU(cmd, "gBuffer");
 
       {
         Scope renderPass(gbuffer, cmd);
@@ -165,10 +164,17 @@ void MainApp::draw() {
 #ifdef fly
         if (!args.flythrough.empty()) {
           if (args.frames > 0)
-            vp = camera->getProjection() * flythrough.sample(max(0, (frame.frameId - skipFrames) / args.avgFrames),
-                                                             args.frames);
-          else
-            vp = camera->getProjection() * flythrough.sample(float(frame.simTime));
+		  {
+			CameraPathKeypoint const kp = cameraPath.getKeypoint(float(frame.frameId - skipFrames) / float(args.avgFrames));
+			glm::mat4 const viewMat = glm::lookAt(kp.position, kp.position + kp.viewVector, kp.upVector);
+			vp = camera->getProjection() * viewMat;
+		  }
+		  else
+		  {
+			CameraPathKeypoint const kp = cameraPath.getKeypoint(float(frame.simTime));
+			glm::mat4 const viewMat = glm::lookAt(kp.position, kp.position + kp.viewVector, kp.upVector);
+			vp = camera->getProjection() * viewMat;
+		  }
         } else {
           vp = camera->getProjection() * camera->getView();
         }
@@ -187,7 +193,7 @@ void MainApp::draw() {
 
 #if rtx
     {
-      ProfileGPU(cmd, "ShadowMask");
+      ProfileGPU(cmd, "shadowMask");
       cmd->bind(shadowMaskPipeline);
       cmd->bind(shadowMaskDescriptor);
       shadowMaskPipeline->setConstants(cmd, lightPosition, 0, vk::ShaderStageFlagBits::eRaygenNV);
@@ -199,7 +205,7 @@ void MainApp::draw() {
     profiler->writeMarker(cmd);
 
     {
-      ProfileGPU(cmd, "Lighting");
+      ProfileGPU(cmd, "shading");
       accBuffer->setLayout(cmd, vk::ImageLayout::eUndefined, vk::ImageLayout::eGeneral, accBuffer->getFullRange());
       cmd->bind(lightingPipeline);
       lightingPipeline->setConstants(cmd, lightPosition, 0, vk::ShaderStageFlagBits::eCompute);

@@ -63,36 +63,11 @@ void Args::init(int argc, char** argv) {
     } else if(arg == "-b" && argc) {
       next();
       bvh = std::stoi(arg);
-    } else if(arg == "-p" && argc) {
-      next();
-      int preset = std::stoi(arg);
-      switch(preset) {
-        case 0:
-          model = "models/sponza/sponza.obj";
-          flythrough = "models/sponza/sponza_fly.txt";
-          light = glm::vec3(0,10,0);
-          break;
-        case 1:
-          model = "models/conference/conference.obj";
-          flythrough = "models/conference/conference_fly.txt";
-          light = glm::vec3(1.98,6.20,-1.825);
-          break;
-        case 2:
-          model = "models/citadel/mycitadel.obj";
-          flythrough = "models/citadel/citadel_fly.txt";
-          light = glm::vec3(-16.58, 18.77, 10.31);
-          break;
-        case 3:
-          model = "models/buddha/buddha_plane.obj";
-          flythrough = "models/buddha/buddha_fly.txt";
-          light = glm::vec3(0 ,0.02, 0.015 );
-          break;
-        case 4:
-          model = "models/hairball_plane.obj";
-          flythrough = "models/hairball_plane/hairball_fly.txt";
-          light = glm::vec3(0,0.1,0);
-          break;
-      }
+    } else if(arg == "-light" && argc) {
+	  next(); light.x = std::stof(arg);
+	  next(); light.y = std::stof(arg);
+	  next(); light.z = std::stof(arg); 
+	  next(); //skips .w
     } else {
       std::cout << helpString;
       exit(0);

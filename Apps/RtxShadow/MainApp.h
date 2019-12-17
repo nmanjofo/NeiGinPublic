@@ -1,7 +1,7 @@
 #include "NeiGin.h"
 #include "Args.h"
 #include "Loader.h"
-#include "Flythrough.h"
+#include "CameraPath.h"
 #include "Loader.h"
 #include "Profiler.h"
 #include "Scene/RaytracingBVH.h"
@@ -21,7 +21,7 @@ protected:
 
   Args args;
   ModelData model;
-  Flythrough flythrough;
+  CameraPath cameraPath;
   vec3 lightPosition = { 0,10,0 };
 
   uvec2 resolution;
