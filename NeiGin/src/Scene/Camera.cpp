@@ -22,7 +22,7 @@ void Camera::setFov(float fovy, ivec2 size) {
 
 void Camera::setFov(vec2 fov) {
   this->fov = fov;
-  aspect = glm::tan( glm::radians( fov.x * 0.5f ) ) / glm::tan( glm::radians( fov.y * 0.5f ) );
+  //aspect = glm::tan( glm::radians( fov.x * 0.5f ) ) / glm::tan( glm::radians( fov.y * 0.5f ) );
   projectionDirty = true;
 }
 

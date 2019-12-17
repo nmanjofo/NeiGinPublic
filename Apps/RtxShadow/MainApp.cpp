@@ -42,7 +42,7 @@ MainApp::MainApp(int argc, char** argv): SimpleApplication(nullptr) {
   // Model
   model = Loader::load(dc, NeiFS->resolve(args.model));
   if (!args.flythrough.empty()) {
-    cameraPath = CameraPath(false, NeiFS->resolve(args.flythrough).string());
+    cameraPath = CameraPath(false, args.flythrough);
   }
 
   lightPosition = args.light;
@@ -117,7 +117,7 @@ MainApp::MainApp(int argc, char** argv): SimpleApplication(nullptr) {
 void MainApp::update(Nei::AppFrame const& frame) {
   profiler->checkResults();
 
-  if (args.frames > 0 && (frame.frameId - skipFrames) > args.frames * args.avgFrames) {
+  if (args.frames > 0 && (frame.frameId - skipFrames) > args.frames* args.avgFrames) {
     profiler->finish();
     quit();
   }
@@ -165,7 +165,7 @@ void MainApp::draw() {
         if (!args.flythrough.empty()) {
           if (args.frames > 0)
 		  {
-			CameraPathKeypoint const kp = cameraPath.getKeypoint(float(frame.frameId - skipFrames) / float(args.avgFrames));
+			CameraPathKeypoint const kp = cameraPath.getKeypoint((float(frame.frameId - skipFrames) /float(args.avgFrames)) / float(args.frames));
 			glm::mat4 const viewMat = glm::lookAt(kp.position, kp.position + kp.viewVector, kp.upVector);
 			vp = camera->getProjection() * viewMat;
 		  }
